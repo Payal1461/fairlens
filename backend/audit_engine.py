@@ -13,7 +13,6 @@ import math
 import re
 import pandas as pd
 import numpy as np
-from scipy import stats
 from typing import Any
 
 # ---- Heuristic column detection ----
@@ -59,10 +58,15 @@ def cramers_v(a: pd.Series, b: pd.Series) -> float:
     confusion = pd.crosstab(a, b)
     if confusion.size == 0 or confusion.shape[0] < 2 or confusion.shape[1] < 2:
         return 0.0
-    chi2 = stats.chi2_contingency(confusion, correction=False)[0]
-    n = confusion.values.sum()
+    # chi-square computed directly with numpy (no scipy dependency)
+    obs = confusion.values.astype(float)
+    row_sums = obs.sum(axis=1, keepdims=True)
+    col_sums = obs.sum(axis=0, keepdims=True)
+    n = obs.sum()
     if n == 0:
         return 0.0
+    expected = row_sums @ col_sums / n
+    chi2 = float(np.nansum((obs - expected) ** 2 / expected))
     phi2 = chi2 / n
     r, k = confusion.shape
     denom = min(k - 1, r - 1)

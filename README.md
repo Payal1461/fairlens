@@ -48,7 +48,7 @@ Intentionally **humanistic** — reads like a thoughtful auditor, not a dashboar
 | Layer | Tools |
 |---|---|
 | Web framework | Flask |
-| Data & statistics | pandas · NumPy · SciPy |
+| Data & statistics | pandas · NumPy |
 | Frontend | Vanilla HTML5 · CSS3 · JavaScript (no framework, no build step) |
 | Server | Gunicorn |
 
