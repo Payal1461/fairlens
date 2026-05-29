@@ -1,0 +1,41 @@
+# Python
+backend/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+
+# Flask secrets & session state
+backend/.secret
+backend/fairlens.db
+backend/.installed
+backend/uploads/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS / temp
+*.log
+*.tmp
+/tmp/
+
+# Generated artifacts
+backend/sample_data/uploads/
+
+# Private study material — NEVER push to public repo
+INTERVIEW_GUIDE.md
+FairLens_Interview_Guide.docx
+FairLens_Mock_Interview.docx
+CONTEXT.md

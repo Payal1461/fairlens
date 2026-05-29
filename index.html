@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fairlens — A second look before the algorithm decides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="nav">
+  <div class="nav-left">
+    <div class="logo-mark">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="11" stroke="#3D2E22" stroke-width="2"/>
+        <path d="M14 5 Q 20 14 14 23 Q 8 14 14 5 Z" fill="#C9573E" opacity="0.85"/>
+      </svg>
+    </div>
+    <span class="logo-text">Fairlens</span>
+  </div>
+  <div class="nav-right">
+    <a href="#about" class="nav-link">Why this matters</a>
+    <a href="#how" class="nav-link">How it works</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <p class="kicker">A pre-model bias audit tool</p>
+    <h1 class="hero-title">
+      Before the algorithm <em>decides</em>,<br/>
+      let's make sure it's <span class="underline-hand">fair.</span>
+    </h1>
+    <p class="hero-sub">
+      Every dataset carries a story — and sometimes, an old prejudice hiding in the numbers.
+      Fairlens reads your data the way a thoughtful person would, and tells you what it sees
+      before a single prediction is made.
+    </p>
+    <div class="hero-cta">
+      <button class="btn-primary" id="startBtn">Audit a dataset →</button>
+      <button class="btn-secondary" id="sampleBtn">Try with sample data</button>
+    </div>
+    <p class="hero-note">Your data is processed for this audit and never stored.</p>
+  </div>
+
+  <div class="hero-illustration" aria-hidden="true">
+    <svg viewBox="0 0 400 360" width="100%" height="100%">
+      <!-- soft sun -->
+      <circle cx="320" cy="80" r="55" fill="#F4C77B" opacity="0.7"/>
+      <!-- magnifying glass -->
+      <circle cx="180" cy="180" r="85" fill="#FDF6EC" stroke="#3D2E22" stroke-width="3"/>
+      <circle cx="180" cy="180" r="70" fill="#FFFBF2"/>
+      <line x1="240" y1="240" x2="320" y2="320" stroke="#3D2E22" stroke-width="8" stroke-linecap="round"/>
+      <!-- people inside lens -->
+      <circle cx="150" cy="170" r="14" fill="#C9573E"/>
+      <circle cx="190" cy="160" r="14" fill="#7A8C5F"/>
+      <circle cx="220" cy="190" r="14" fill="#D4A574"/>
+      <circle cx="160" cy="210" r="14" fill="#8B6F9E"/>
+      <!-- scales -->
+      <path d="M 80 280 L 120 240 L 60 240 Z" fill="#7A8C5F" opacity="0.4"/>
+    </svg>
+    <p class="illustration-caption">"Statistics tell stories.<br/>We just listen carefully."</p>
+  </div>
+</header>
+
+<!-- ============ STORY STRIP ============ -->
+<section class="story-strip">
+  <div class="story-card">
+    <p class="story-quote">"My loan got rejected. The bank said the system decided. But I never met the system."</p>
+    <p class="story-attr">— a real conversation, paraphrased</p>
+  </div>
+  <div class="story-text">
+    <h2>This tool exists because of <em>her.</em></h2>
+    <p>
+      Most bias audits happen <strong>after</strong> a model has already affected someone's life.
+      Fairlens flips that: we look at the data <strong>before</strong> training begins —
+      while there's still time to fix things, ask better questions, and collect what's missing.
+    </p>
+  </div>
+</section>
+
+<!-- ============ UPLOAD ZONE ============ -->
+<section class="upload-section" id="upload">
+  <div class="upload-card">
+    <h2 class="section-title">Bring in your data</h2>
+    <p class="section-sub">CSV or Excel. We'll do the rest.</p>
+
+    <input type="file" id="fileInput" accept=".csv" hidden />
+    <div class="dropzone" id="dropzone">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <path d="M24 8 L24 32 M14 22 L24 32 L34 22" stroke="#3D2E22" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 38 L40 38" stroke="#3D2E22" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <p class="drop-text">Drag your CSV here, or <span class="link">browse</span></p>
+      <p class="drop-hint" id="dropHint">loan_applications.csv · hiring_data.csv · admissions.csv</p>
+    </div>
+
+    <div class="or-divider"><span>or</span></div>
+
+    <div class="sample-row">
+      <button class="sample-chip" data-sample="loan">📑 Loan Approvals (1,000 rows)</button>
+      <button class="sample-chip" data-sample="hire">💼 Hiring Decisions (820 rows)</button>
+      <button class="sample-chip" data-sample="admit">🎓 College Admissions (1,500 rows)</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCANNING (hidden initially) ============ -->
+<section class="scanning" id="scanning" style="display:none;">
+  <div class="scan-inner">
+    <div class="scan-circle">
+      <div class="scan-pulse"></div>
+      <div class="scan-pulse delay"></div>
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <circle cx="28" cy="28" r="22" stroke="#3D2E22" stroke-width="2.5"/>
+        <line x1="44" y1="44" x2="52" y2="52" stroke="#3D2E22" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h2 class="scan-title" id="scanTitle">Reading your data…</h2>
+    <p class="scan-status" id="scanStatus">Loading rows</p>
+    <div class="scan-steps">
+      <div class="scan-step" data-step="1"><span class="dot"></span> Checking who is represented</div>
+      <div class="scan-step" data-step="2"><span class="dot"></span> Hunting for hidden proxies</div>
+      <div class="scan-step" data-step="3"><span class="dot"></span> Measuring outcome gaps</div>
+      <div class="scan-step" data-step="4"><span class="dot"></span> Writing the report</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESULTS DASHBOARD (hidden initially) ============ -->
+<section class="results" id="results" style="display:none;">
+
+  <!-- Report card header -->
+  <div class="report-header">
+    <div>
+      <p class="kicker dark">Bias Report Card</p>
+      <h2 class="report-title" id="reportTitle">Loan Approvals · 1,000 rows</h2>
+      <p class="report-meta" id="reportMeta">Audited just now · 8 columns reviewed</p>
+    </div>
+    <div class="score-card" id="scoreCard">
+      <div class="score-ring" id="scoreRing">
+        <span class="score-num" id="scoreNum">6.2</span>
+        <span class="score-out">/ 10</span>
+      </div>
+      <p class="score-label" id="scoreLabel">Needs attention</p>
+    </div>
+  </div>
+
+  <!-- Honest summary in human language -->
+  <div class="honest-note">
+    <p class="caveat-pen">A note from the auditor</p>
+    <p class="honest-text" id="honestText">
+      Your dataset leans heavily toward one group, and there's a column quietly carrying caste information.
+      Nothing here is catastrophic — but if you trained a model today, certain people would be more likely
+      to get a "no" before they ever got a fair look.
+    </p>
+  </div>
+
+  <!-- Findings grid -->
+  <div class="findings-grid">
+
+    <!-- Finding 1: Representation -->
+    <article class="finding-card severity-warn">
+      <div class="finding-top">
+        <span class="finding-num">01</span>
+        <span class="finding-tag">Representation</span>
+      </div>
+      <h3 class="finding-title">Some voices are missing</h3>
+      <p class="finding-body" id="repBody">
+        Your dataset is 72% male and 28% female. That's not a 50/50 world — but it's also not the
+        world we live in. A model trained on this will learn what "male applicants" look like, much
+        better than what female applicants do.
+      </p>
+      <div class="bars">
+        <div class="bar-row"><span class="bar-label">Male</span><div class="bar"><div class="bar-fill male" style="width:72%"></div></div><span class="bar-val">72%</span></div>
+        <div class="bar-row"><span class="bar-label">Female</span><div class="bar"><div class="bar-fill female" style="width:28%"></div></div><span class="bar-val">28%</span></div>
+        <div class="bar-row"><span class="bar-label">Other</span><div class="bar"><div class="bar-fill other" style="width:0%"></div></div><span class="bar-val">0%</span></div>
+      </div>
+      <p class="finding-fix">→ Try oversampling underrepresented groups, or collect more data before training.</p>
+    </article>
+
+    <!-- Finding 2: Proxy variables -->
+    <article class="finding-card severity-crit">
+      <div class="finding-top">
+        <span class="finding-num">02</span>
+        <span class="finding-tag">Hidden proxies</span>
+      </div>
+      <h3 class="finding-title">A column is doing something it shouldn't</h3>
+      <p class="finding-body">
+        <strong>Pincode</strong> shows a 0.71 correlation with religion in your data. Even if you remove
+        the religion column, the model can guess it from the pincode. This is how bias smuggles itself in.
+      </p>
+      <div class="proxy-list">
+        <div class="proxy-item">
+          <span class="proxy-col">Pincode</span>
+          <span class="proxy-arrow">→</span>
+          <span class="proxy-target">Religion</span>
+          <span class="proxy-score crit">r = 0.71</span>
+        </div>
+        <div class="proxy-item">
+          <span class="proxy-col">Surname</span>
+          <span class="proxy-arrow">→</span>
+          <span class="proxy-target">Caste</span>
+          <span class="proxy-score warn">r = 0.58</span>
+        </div>
+        <div class="proxy-item">
+          <span class="proxy-col">School name</span>
+          <span class="proxy-arrow">→</span>
+          <span class="proxy-target">Income class</span>
+          <span class="proxy-score warn">r = 0.49</span>
+        </div>
+      </div>
+      <p class="finding-fix">→ Drop these columns, or transform them (e.g., bucket pincodes into broader regions).</p>
+    </article>
+
+    <!-- Finding 3: Outcome gap -->
+    <article class="finding-card severity-crit">
+      <div class="finding-top">
+        <span class="finding-num">03</span>
+        <span class="finding-tag">Outcome gap</span>
+      </div>
+      <h3 class="finding-title">The outcomes aren't equal</h3>
+      <p class="finding-body">
+        Among applicants with similar income and credit scores, men got approved 68% of the time.
+        Women got approved 41% of the time. That's a 27-point gap the model will happily learn.
+      </p>
+      <div class="gap-viz">
+        <div class="gap-col">
+          <div class="gap-bar"><div class="gap-fill male" style="height:68%"></div></div>
+          <p class="gap-pct">68%</p>
+          <p class="gap-lbl">Male approval</p>
+        </div>
+        <div class="gap-col">
+          <div class="gap-bar"><div class="gap-fill female" style="height:41%"></div></div>
+          <p class="gap-pct">41%</p>
+          <p class="gap-lbl">Female approval</p>
+        </div>
+        <div class="gap-col">
+          <p class="gap-rule">⚖️ 80% rule</p>
+          <p class="gap-rule-val">FAIL</p>
+          <p class="gap-rule-hint">41/68 = 60% (need ≥80%)</p>
+        </div>
+      </div>
+      <p class="finding-fix">→ Use reweighting, or apply post-processing fairness constraints during training.</p>
+    </article>
+
+    <!-- Finding 4: Missing data patterns -->
+    <article class="finding-card severity-ok">
+      <div class="finding-top">
+        <span class="finding-num">04</span>
+        <span class="finding-tag">Data quality</span>
+      </div>
+      <h3 class="finding-title">Most fields are filled in</h3>
+      <p class="finding-body">
+        97% of rows have complete data across protected attributes. Income column has 4% missingness,
+        but it's spread evenly across groups, so it's unlikely to skew anything.
+      </p>
+      <div class="quality-list">
+        <div class="quality-item"><span>Gender</span><span class="quality-val">100%</span></div>
+        <div class="quality-item"><span>Age</span><span class="quality-val">99%</span></div>
+        <div class="quality-item"><span>Income</span><span class="quality-val warn">96%</span></div>
+        <div class="quality-item"><span>Credit score</span><span class="quality-val">98%</span></div>
+      </div>
+      <p class="finding-fix">→ Looking good. Optionally impute the missing income values.</p>
+    </article>
+
+  </div>
+
+  <!-- ============ DATA PREVIEW ============ -->
+  <section class="preview-section">
+    <h2 class="section-title">A peek at the data</h2>
+    <p class="section-sub">First 10 rows — the same view the model sees.</p>
+    <div class="data-table-wrap">
+      <table class="data-table" id="dataTable">
+        <thead><tr><th>—</th></tr></thead>
+        <tbody><tr><td>Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footer actions -->
+  <div class="report-footer">
+    <button class="btn-secondary" id="newAuditBtn">Audit another dataset</button>
+    <p class="footer-soft">This report is yours. Share it with whoever's building the model.</p>
+  </div>
+
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how-section" id="how">
+  <h2 class="section-title center">How Fairlens looks at your data</h2>
+  <p class="section-sub center">Four passes, in plain language.</p>
+
+  <div class="how-grid">
+    <div class="how-step">
+      <span class="how-num">1</span>
+      <h4>Who's in the room?</h4>
+      <p>We count every group — gender, age bracket, region — and tell you who's missing.</p>
+    </div>
+    <div class="how-step">
+      <span class="how-num">2</span>
+      <h4>Who's whispering through proxies?</h4>
+      <p>Pincode, surname, school — innocent-looking columns that secretly carry identity.</p>
+    </div>
+    <div class="how-step">
+      <span class="how-num">3</span>
+      <h4>Are the outcomes fair?</h4>
+      <p>We compare approval/rejection/selection rates across groups using the 80% rule.</p>
+    </div>
+    <div class="how-step">
+      <span class="how-num">4</span>
+      <h4>What would help?</h4>
+      <p>Each finding comes with a plain, concrete suggestion you can act on before training.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY MATTERS ============ -->
+<section class="why-section" id="about">
+  <div class="why-inner">
+    <p class="kicker">Why this matters</p>
+    <h2 class="why-title">A model that's biased before training stays biased after.</h2>
+    <p class="why-text">
+      You can tune hyperparameters all you want. You can add regularization, change architectures,
+      run grid searches for weeks. None of it fixes a dataset that didn't include enough of the
+      people it's going to judge.
+    </p>
+    <p class="why-text">
+      Fairness isn't a metric you bolt on at the end. It starts with the question: <em>who is in this data, and who isn't?</em>
+    </p>
+    <p class="signature">— made for the people the algorithm forgets</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer-mark">
+    <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="11" stroke="#3D2E22" stroke-width="2"/>
+      <path d="M14 5 Q 20 14 14 23 Q 8 14 14 5 Z" fill="#C9573E" opacity="0.85"/>
+    </svg>
+    <span>Fairlens</span>
+    <span class="footer-tagline">~ a second look before the algorithm decides</span>
+  </div>
+  <p class="footer-legal">© 2026 Fairlens · All rights reserved.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
