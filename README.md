@@ -9,7 +9,7 @@ A web app that audits machine-learning training datasets for **demographic bias*
 
 ## 🌐 Live Demo
 
-👉 https://fairlens-3i0x.onrender.com
+👉 https://fairlens-live.onrender.com
 
 > ⚠️ Hosted on Render free tier — the first request may take ~30–60s to wake up.
 
