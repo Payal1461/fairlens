@@ -31,6 +31,19 @@ penalty     = 0.25·representation + 0.30·proxy + 0.35·outcome_gap + 0.10·qua
 Bias score  = 10 × (1 − penalty)
 ```
 
+### Bias Score — range & meaning
+
+The score ranges from **0 (very biased)** to **10 (fair)**:
+
+| Score | Label | Meaning |
+|-------|-------|---------|
+| **8 – 10** | 🟢 Mostly fair | Minimal bias — safe to proceed with care |
+| **6 – 8** | 🟡 Needs attention | Moderate issues — review before training |
+| **4 – 6** | 🟠 High risk | Significant bias — fix before using |
+| **0 – 4** | 🔴 Critical bias | Severe bias — must be fixed first |
+
+Each of the four checks is rated *ok / warning / critical*, weighted by the values above, and combined into this single score.
+
 ---
 
 ## 🖥 Interface
@@ -95,6 +108,17 @@ Three synthetic datasets with known injected bias patterns:
 | `admissions_data.csv` | 1,500 | Mostly fair (passes the 80% rule) |
 
 ---
+
+## ⚠️ Limitations
+
+This is a focused prototype, not a production-grade tool. Known limitations:
+
+- **Name-based column detection** — protected/proxy/outcome columns are detected by matching keywords in column *names* (e.g. `gender`, `pincode`, `approved`). A column with an unusual name (e.g. `g1`) won't be picked up.
+- **Demographic bias only** — it checks gender, religion, caste, race, age and region. Other bias types (sampling, measurement, label bias) are out of scope.
+- **First protected column** — representation and outcome-gap use only the first detected protected column, not all of them at once.
+- **Discrete severity** — each check is rated ok/warning/critical, so the score is coarse rather than continuous.
+- **Templated suggestions** — fix recommendations are rule-based text, not dynamically generated for your specific data.
+- **Outcome gap needs a label** — the 80% rule check requires a labelled outcome column; the other three checks work without one.
 
 ## ☁️ Deploy (Render)
 
