@@ -44,6 +44,18 @@ The score ranges from **0 (very biased)** to **10 (fair)**:
 
 Each of the four checks is rated *ok / warning / critical*, weighted by the values above, and combined into this single score.
 
+### Which columns it detects
+
+Columns are detected automatically by matching keywords in their names:
+
+| Type | Detected when the column name contains… |
+|------|------------------------------------------|
+| **Protected attributes** | `gender` / `sex`, `religion`, `caste`, `race` / `ethnicity`, `age`, `region` / `area` / `location` |
+| **Proxy suspects** | `pincode` / `zip`, `surname` / `last_name`, `address`, `college` / `school` / `board`, `hobbies`, `name` |
+| **Outcome** | `approved`, `selected`, `admitted`, `hired`, `outcome`, `result`, `label`, `target`, `decision` |
+
+So the four bias checks work best on datasets that include at least one of these protected columns (and, for the outcome-gap check, an outcome column).
+
 ---
 
 ## 🖥 Interface
@@ -115,6 +127,8 @@ This is a focused prototype, not a production-grade tool. Known limitations:
 
 - **Name-based column detection** — protected/proxy/outcome columns are detected by matching keywords in column *names* (e.g. `gender`, `pincode`, `approved`). A column with an unusual name (e.g. `g1`) won't be picked up.
 - **Demographic bias only** — it checks gender, religion, caste, race, age and region. Other bias types (sampling, measurement, label bias) are out of scope.
+- **Numeric protected columns aren't binned** — a numeric column like `age` is treated category-by-category, so every distinct value becomes its own "group". On `age` this is misleading (e.g. each age = 10% of 10 rows); ideally ages would be bucketed into ranges (20–30, 30–40, …). It works best on truly categorical attributes like gender or religion.
+- **Small datasets are unreliable** — with very few rows, the proxy correlations (Cramér's V) can be coincidental rather than real. Larger datasets (hundreds+ rows) give meaningful results.
 - **First protected column** — representation and outcome-gap use only the first detected protected column, not all of them at once.
 - **Discrete severity** — each check is rated ok/warning/critical, so the score is coarse rather than continuous.
 - **Templated suggestions** — fix recommendations are rule-based text, not dynamically generated for your specific data.
