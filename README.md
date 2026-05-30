@@ -125,14 +125,11 @@ Three synthetic datasets with known injected bias patterns:
 
 This is a focused prototype, not a production-grade tool. Known limitations:
 
-- **Name-based column detection** — protected/proxy/outcome columns are detected by matching keywords in column *names* (e.g. `gender`, `pincode`, `approved`). A column with an unusual name (e.g. `g1`) won't be picked up.
-- **Demographic bias only** — it checks gender, religion, caste, race, age and region. Other bias types (sampling, measurement, label bias) are out of scope.
-- **Numeric protected columns aren't binned** — a numeric column like `age` is treated category-by-category, so every distinct value becomes its own "group". On `age` this is misleading (e.g. each age = 10% of 10 rows); ideally ages would be bucketed into ranges (20–30, 30–40, …). It works best on truly categorical attributes like gender or religion.
-- **Small datasets are unreliable** — with very few rows, the proxy correlations (Cramér's V) can be coincidental rather than real. Larger datasets (hundreds+ rows) give meaningful results.
-- **First protected column** — representation and outcome-gap use only the first detected protected column, not all of them at once.
-- **Discrete severity** — each check is rated ok/warning/critical, so the score is coarse rather than continuous.
-- **Templated suggestions** — fix recommendations are rule-based text, not dynamically generated for your specific data.
-- **Outcome gap needs a label** — the 80% rule check requires a labelled outcome column; the other three checks work without one.
+- **Name-based detection** — columns are found by keyword in their *names* (`gender`, `pincode`, `approved`); unusual names (e.g. `g1`) are missed.
+- **Demographic bias only** — covers gender, religion, caste, race, age, region; sampling/measurement/label bias are out of scope.
+- **Numeric attributes & small data** — numeric columns like `age` aren't bucketed into ranges (each value becomes its own group), and on very few rows the Cramér's V correlations can be coincidental. Works best on categorical attributes with hundreds+ rows.
+- **Simplified scoring** — uses only the first detected protected column, rates each check coarsely (ok / warning / critical) rather than continuously, and gives rule-based (templated) fix suggestions.
+- **Outcome gap needs a label** — the 80% rule needs a labelled outcome column; the other three checks work without one.
 
 ## ☁️ Deploy (Render)
 
